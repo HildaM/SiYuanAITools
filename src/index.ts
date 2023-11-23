@@ -24,6 +24,9 @@ import { SettingUtils } from "./libs/setting-utils";
 const STORAGE_NAME = "menu-config";
 const TAB_TYPE = "custom_tab";
 const DOCK_TYPE = "dock_tab";
+const OpenAI_Icon = `<svg t="1700723580045" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4448" width="200" height="200"><path d="M950.676002 419.057175a255.346807 255.346807 0 0 0-22.014863-209.48251 257.949339 257.949339 0 0 0-277.74565-123.72694A258.759964 258.759964 0 0 0 212.538139 178.386943a255.346807 255.346807 0 0 0-170.572521 123.726941 257.949339 257.949339 0 0 0 31.699696 302.789689 255.133485 255.133485 0 0 0 21.758876 209.525175 258.162662 258.162662 0 0 0 277.958972 123.726941A255.346807 255.346807 0 0 0 565.757223 1023.996587a258.375984 258.375984 0 0 0 246.259276-179.446729 255.560129 255.560129 0 0 0 170.529856-123.726941 258.375984 258.375984 0 0 0-31.870353-301.765742zM565.757223 957.013381a190.966133 190.966133 0 0 1-122.702994-44.371041l6.015689-3.455821 203.893466-117.668587a33.918248 33.918248 0 0 0 16.724469-29.054499v-287.430483l86.182214 49.832092a3.029177 3.029177 0 0 1 1.621249 2.218552v238.195693a192.160738 192.160738 0 0 1-191.734093 191.734094zM153.618516 780.979809a190.710147 190.710147 0 0 1-22.825487-128.590689l6.058354 3.626479 204.064123 117.711252a32.8943 32.8943 0 0 0 33.278281 0l249.288453-143.736574v99.493526a3.413157 3.413157 0 0 1-1.407927 2.645197L415.578315 851.205514a191.990081 191.990081 0 0 1-261.959799-70.225705zM99.861294 336.928085a191.350114 191.350114 0 0 1 100.944118-84.176984V494.957254a32.680978 32.680978 0 0 0 16.553811 28.841176l248.093849 143.139272-86.182214 49.832092a3.242499 3.242499 0 0 1-3.029177 0l-206.069353-118.863193A192.160738 192.160738 0 0 1 99.861294 335.904138z m708.102081 164.471503l-248.861809-144.504534L645.070458 307.23362a3.242499 3.242499 0 0 1 3.029177 0l206.069353 119.076514a191.734094 191.734094 0 0 1-28.841177 345.795467v-242.248817a33.704925 33.704925 0 0 0-17.364436-28.457196z m85.75557-128.97467l-6.01569-3.626479-203.680143-118.692534a33.107623 33.107623 0 0 0-33.491603 0L401.456378 393.842478V294.306288a2.815855 2.815855 0 0 1 1.194605-2.602533l206.069353-118.905856a191.990081 191.990081 0 0 1 284.998609 198.816394z m-539.278804 176.417552l-86.182214-49.661434a3.413157 3.413157 0 0 1-1.62125-2.431875V259.236099a191.990081 191.990081 0 0 1 314.65041-147.320388l-6.058354 3.413157-203.850801 117.668587a33.918248 33.918248 0 0 0-16.767134 29.054499z m46.802915-100.901454l111.012931-63.996693 111.226253 63.996693v127.950723l-110.799609 63.996693-111.226253-63.996693z" p-id="4449"></path></svg>`
+
+
 
 export default class SiYuanAIPlugin extends Plugin {
 
@@ -37,18 +40,13 @@ export default class SiYuanAIPlugin extends Plugin {
 
         console.log("loading plugin-sample", this.i18n);
 
+        // 获取前端展示设备信息
         const frontEnd = getFrontend();
         this.isMobile = frontEnd === "mobile" || frontEnd === "browser-mobile";
-        // 图标的制作参见帮助文档
-        this.addIcons(`<symbol id="iconFace" viewBox="0 0 32 32">
-<path d="M13.667 17.333c0 0.92-0.747 1.667-1.667 1.667s-1.667-0.747-1.667-1.667 0.747-1.667 1.667-1.667 1.667 0.747 1.667 1.667zM20 15.667c-0.92 0-1.667 0.747-1.667 1.667s0.747 1.667 1.667 1.667 1.667-0.747 1.667-1.667-0.747-1.667-1.667-1.667zM29.333 16c0 7.36-5.973 13.333-13.333 13.333s-13.333-5.973-13.333-13.333 5.973-13.333 13.333-13.333 13.333 5.973 13.333 13.333zM14.213 5.493c1.867 3.093 5.253 5.173 9.12 5.173 0.613 0 1.213-0.067 1.787-0.16-1.867-3.093-5.253-5.173-9.12-5.173-0.613 0-1.213 0.067-1.787 0.16zM5.893 12.627c2.28-1.293 4.040-3.4 4.88-5.92-2.28 1.293-4.040 3.4-4.88 5.92zM26.667 16c0-1.040-0.16-2.040-0.44-2.987-0.933 0.2-1.893 0.32-2.893 0.32-4.173 0-7.893-1.92-10.347-4.92-1.4 3.413-4.187 6.093-7.653 7.4 0.013 0.053 0 0.12 0 0.187 0 5.88 4.787 10.667 10.667 10.667s10.667-4.787 10.667-10.667z"></path>
-</symbol>
-<symbol id="iconSaving" viewBox="0 0 32 32">
-<path d="M20 13.333c0-0.733 0.6-1.333 1.333-1.333s1.333 0.6 1.333 1.333c0 0.733-0.6 1.333-1.333 1.333s-1.333-0.6-1.333-1.333zM10.667 12h6.667v-2.667h-6.667v2.667zM29.333 10v9.293l-3.76 1.253-2.24 7.453h-7.333v-2.667h-2.667v2.667h-7.333c0 0-3.333-11.28-3.333-15.333s3.28-7.333 7.333-7.333h6.667c1.213-1.613 3.147-2.667 5.333-2.667 1.107 0 2 0.893 2 2 0 0.28-0.053 0.533-0.16 0.773-0.187 0.453-0.347 0.973-0.427 1.533l3.027 3.027h2.893zM26.667 12.667h-1.333l-4.667-4.667c0-0.867 0.12-1.72 0.347-2.547-1.293 0.333-2.347 1.293-2.787 2.547h-8.227c-2.573 0-4.667 2.093-4.667 4.667 0 2.507 1.627 8.867 2.68 12.667h2.653v-2.667h8v2.667h2.68l2.067-6.867 3.253-1.093v-4.707z"></path>
-</symbol>`);
 
+        // 顶部图标组件
         const topBarElement = this.addTopBar({
-            icon: "iconFace",
+            icon: OpenAI_Icon,
             title: this.i18n.addTopBarIcon,
             position: "right",
             callback: () => {
@@ -66,24 +64,6 @@ export default class SiYuanAIPlugin extends Plugin {
                     this.addMenu(rect);
                 }
             }
-        });
-
-        const statusIconTemp = document.createElement("template");
-        statusIconTemp.innerHTML = `<div class="toolbar__item ariaLabel" aria-label="Remove plugin-sample Data">
-    <svg>
-        <use xlink:href="#iconTrashcan"></use>
-    </svg>
-</div>`;
-        statusIconTemp.content.firstElementChild.addEventListener("click", () => {
-            confirm("⚠️", this.i18n.confirmRemove.replace("${name}", this.name), () => {
-                this.removeData(STORAGE_NAME).then(() => {
-                    this.data[STORAGE_NAME] = { readonlyText: "Readonly" };
-                    showMessage(`[${this.name}]: ${this.i18n.removedData}`);
-                });
-            });
-        });
-        this.addStatusBar({
-            element: statusIconTemp.content.firstElementChild as HTMLElement,
         });
 
         // 顶部图表的二级菜单展示，任意一个都可以生效
@@ -111,35 +91,41 @@ export default class SiYuanAIPlugin extends Plugin {
             },
         });
 
+        // 聊天窗口
         this.addDock({
             config: {
-                position: "LeftBottom",
-                size: { width: 200, height: 0 },
-                icon: "iconSaving",
-                title: "Custom Dock",
+                position: "RightTop",
+                size: { width: 500, height: 0 },
+                icon: OpenAI_Icon,
+                title: "Chat Box",
             },
             data: {
-                text: "This is my custom dock"
+                text: "TODO: 创建类似于“讯飞IDEA插件”样式的聊天窗口"
             },
             type: DOCK_TYPE,
             resize() {
                 console.log(DOCK_TYPE + " resize");
             },
+            // 内部窗口样式
             init() {
-                this.element.innerHTML = `<div class="fn__flex-1 fn__flex-column">
-    <div class="block__icons">
-        <div class="block__logo">
-            <svg><use xlink:href="#iconEmoji"></use></svg>
-            Custom Dock
-        </div>
-        <span class="fn__flex-1 fn__space"></span>
-        <span data-type="min" class="block__icon b3-tooltips b3-tooltips__sw" aria-label="Min ${adaptHotkey("⌘W")}"><svg><use xlink:href="#iconMin"></use></svg></span>
-    </div>
-    <div class="fn__flex-1 plugin-sample__custom-dock">
-        ${this.data.text}
-    </div>
-</div>`;
+                this.element.innerHTML = 
+                `<div class="fn__flex-1 fn__flex-column">
+                    <div class="block__icons">
+                        <div class="block__logo">
+                            ${OpenAI_Icon}
+                            AI 控制台
+                        </div>
+                        <span class="fn__flex-1 fn__space"></span>
+                        <span data-type="min" class="block__icon b3-tooltips b3-tooltips__sw" aria-label="Min ${adaptHotkey("⌘W")}">
+                            <svg><use xlink:href="#iconMin"></use></svg>
+                        </span>
+                    </div>
+                    <div class="fn__flex-1 plugin-sample__custom-dock">
+                        ${this.data.text}
+                    </div>
+                </div>`;
             },
+
             destroy() {
                 console.log("destroy dock:", DOCK_TYPE);
             }
@@ -261,7 +247,7 @@ export default class SiYuanAIPlugin extends Plugin {
      * A custom setting pannel provided by svelte
      * 注意：需要配合下面的 addMenu() 方法
      */
-    openDIYSetting(): void {
+    openGPTSetting(): void {
         let dialog = new Dialog({
             title: "SettingPannel",
             content: `<div id="SettingPanel"></div>`,
@@ -277,22 +263,10 @@ export default class SiYuanAIPlugin extends Plugin {
         });
     }
 
-    private eventBusPaste(event: any) {
-        // 如果需异步处理请调用 preventDefault， 否则会进行默认处理
-        event.preventDefault();
-        // 如果使用了 preventDefault，必须调用 resolve，否则程序会卡死
-        event.detail.resolve({
-            textPlain: event.detail.textPlain.trim(),
-        });
-    }
-
-    private eventBusLog({ detail }: any) {
-        console.log(detail);
-    }
 
     private blockIconEvent({ detail }: any) {
-        detail.menu.addItem({
-            iconHTML: "",
+        detail.menu.addItem({   
+            iconHTML: "", 
             label: this.i18n.removeSpace,
             click: () => {
                 const doOperations: IOperation[] = [];
@@ -338,433 +312,37 @@ export default class SiYuanAIPlugin extends Plugin {
             console.log("点击了顶栏图表");
         }); 
 
-        // 打开悬浮固定窗口
+        // 说明文本
         menu.addItem({
-            icon: "iconInfo",
-            label: "Dialog(open help first)",
-            accelerator: this.commands[0].customHotkey,
-            click: () => {
-                this.showDialog();
-            }
+            icon: "iconSparkles",
+            label: "SiYuanAITools 设置",
+            type: "readonly",
         });
-
-        // 电脑端独有的设置
-        if (!this.isMobile) {
-            menu.addItem({
-                icon: "iconFace",
-                label: "Open Custom Tab",
-                click: () => {
-                    // 使用 openTab() 方法打开一个页面
-                    const tab = openTab({
-                        app: this.app,
-                        custom: {
-                            icon: "iconFace",
-                            title: "Custom Tab",
-                            data: {
-                                text: "This is my custom tab",
-                            },
-                            id: this.name + TAB_TYPE
-                        },
-                    });
-                    console.log(tab);
-                }
-            });
-
-            // Asset窗口
-            menu.addItem({
-                icon: "iconImage",
-                label: "Open Asset Tab(open help first)",
-                click: () => {
-                    const tab = openTab({
-                        app: this.app,
-                        asset: {
-                            path: "assets/paragraph-20210512165953-ag1nib4.svg"
-                        }
-                    });
-                    console.log(tab);
-                }
-            });
-
-            // 文件窗口
-            menu.addItem({
-                icon: "iconFile",
-                label: "Open Doc Tab(open help first)",
-                click: async () => {
-                    const tab = await openTab({
-                        app: this.app,
-                        doc: {
-                            id: "20200812220555-lj3enxa",
-                        }
-                    });
-                    console.log(tab);
-                }
-            });
-
-            // 搜索栏
-            menu.addItem({
-                icon: "iconSearch",
-                label: "Open Search Tab",
-                click: () => {
-                    const tab = openTab({
-                        app: this.app,
-                        search: {
-                            k: "SiYuan"
-                        }
-                    });
-                    console.log(tab);
-                }
-            });
-
-            // 闪卡窗口
-            menu.addItem({
-                icon: "iconRiffCard",
-                label: "Open Card Tab",
-                click: () => {
-                    const tab = openTab({
-                        app: this.app,
-                        card: {
-                            type: "all"
-                        }
-                    });
-                    console.log(tab);
-                }
-            });
-            // 打开悬浮窗
-            menu.addItem({
-                icon: "iconLayout",
-                label: "Open Float Layer(open help first)",
-                click: () => {
-                    this.addFloatLayer({
-                        ids: ["20231123084430-h2lp8l9"],
-                        defIds: ["20230415111858-vgohvf3", "20200813131152-0wk5akh"],
-                        x: window.innerWidth,
-                        y: 32
-                    });
-                }
-            });
-            // 打开文件
-            menu.addItem({
-                icon: "iconOpenWindow",
-                label: "Open Doc Window(open help first)",
-                click: () => {
-                    openWindow({
-                        doc: {id: "20200812220555-lj3enxa"}
-                    });
-                }
-            });
-        }
-        // 三级菜单
-        menu.addItem({
-            icon: "iconScrollHoriz",
-            label: "Event Bus",
-            type: "submenu",
-            submenu: [{
-                icon: "iconSelect",
-                label: "On ws-main",
-                click: () => {
-                    this.eventBus.on("ws-main", this.eventBusLog);
-                }
-            }, {
-                icon: "iconClose",
-                label: "Off ws-main",
-                click: () => {
-                    this.eventBus.off("ws-main", this.eventBusLog);
-                }
-            }, {
-                icon: "iconSelect",
-                label: "On click-blockicon",
-                click: () => {
-                    this.eventBus.on("click-blockicon", this.blockIconEventBindThis);
-                }
-            }, {
-                icon: "iconClose",
-                label: "Off click-blockicon",
-                click: () => {
-                    this.eventBus.off("click-blockicon", this.blockIconEventBindThis);
-                }
-            }, {
-                icon: "iconSelect",
-                label: "On click-pdf",
-                click: () => {
-                    this.eventBus.on("click-pdf", this.eventBusLog);
-                }
-            }, {
-                icon: "iconClose",
-                label: "Off click-pdf",
-                click: () => {
-                    this.eventBus.off("click-pdf", this.eventBusLog);
-                }
-            }, {
-                icon: "iconSelect",
-                label: "On click-editorcontent",
-                click: () => {
-                    this.eventBus.on("click-editorcontent", this.eventBusLog);
-                }
-            }, {
-                icon: "iconClose",
-                label: "Off click-editorcontent",
-                click: () => {
-                    this.eventBus.off("click-editorcontent", this.eventBusLog);
-                }
-            }, {
-                icon: "iconSelect",
-                label: "On click-editortitleicon",
-                click: () => {
-                    this.eventBus.on("click-editortitleicon", this.eventBusLog);
-                }
-            }, {
-                icon: "iconClose",
-                label: "Off click-editortitleicon",
-                click: () => {
-                    this.eventBus.off("click-editortitleicon", this.eventBusLog);
-                }
-            }, {
-                icon: "iconSelect",
-                label: "On open-noneditableblock",
-                click: () => {
-                    this.eventBus.on("open-noneditableblock", this.eventBusLog);
-                }
-            }, {
-                icon: "iconClose",
-                label: "Off open-noneditableblock",
-                click: () => {
-                    this.eventBus.off("open-noneditableblock", this.eventBusLog);
-                }
-            }, {
-                icon: "iconSelect",
-                label: "On loaded-protyle-static",
-                click: () => {
-                    this.eventBus.on("loaded-protyle-static", this.eventBusLog);
-                }
-            }, {
-                icon: "iconClose",
-                label: "Off loaded-protyle-static",
-                click: () => {
-                    this.eventBus.off("loaded-protyle-static", this.eventBusLog);
-                }
-            }, {
-                icon: "iconSelect",
-                label: "On loaded-protyle-dynamic",
-                click: () => {
-                    this.eventBus.on("loaded-protyle-dynamic", this.eventBusLog);
-                }
-            }, {
-                icon: "iconClose",
-                label: "Off loaded-protyle-dynamic",
-                click: () => {
-                    this.eventBus.off("loaded-protyle-dynamic", this.eventBusLog);
-                }
-            }, {
-                icon: "iconSelect",
-                label: "On switch-protyle",
-                click: () => {
-                    this.eventBus.on("switch-protyle", this.eventBusLog);
-                }
-            }, {
-                icon: "iconClose",
-                label: "Off switch-protyle",
-                click: () => {
-                    this.eventBus.off("switch-protyle", this.eventBusLog);
-                }
-            }, {
-                icon: "iconSelect",
-                label: "On destroy-protyle",
-                click: () => {
-                    this.eventBus.on("destroy-protyle", this.eventBusLog);
-                }
-            }, {
-                icon: "iconClose",
-                label: "Off destroy-protyle",
-                click: () => {
-                    this.eventBus.off("destroy-protyle", this.eventBusLog);
-                }
-            }, {
-                icon: "iconSelect",
-                label: "On open-menu-doctree",
-                click: () => {
-                    this.eventBus.on("open-menu-doctree", this.eventBusLog);
-                }
-            }, {
-                icon: "iconClose",
-                label: "Off open-menu-doctree",
-                click: () => {
-                    this.eventBus.off("open-menu-doctree", this.eventBusLog);
-                }
-            }, {
-                icon: "iconSelect",
-                label: "On open-menu-blockref",
-                click: () => {
-                    this.eventBus.on("open-menu-blockref", this.eventBusLog);
-                }
-            }, {
-                icon: "iconClose",
-                label: "Off open-menu-blockref",
-                click: () => {
-                    this.eventBus.off("open-menu-blockref", this.eventBusLog);
-                }
-            }, {
-                icon: "iconSelect",
-                label: "On open-menu-fileannotationref",
-                click: () => {
-                    this.eventBus.on("open-menu-fileannotationref", this.eventBusLog);
-                }
-            }, {
-                icon: "iconClose",
-                label: "Off open-menu-fileannotationref",
-                click: () => {
-                    this.eventBus.off("open-menu-fileannotationref", this.eventBusLog);
-                }
-            }, {
-                icon: "iconSelect",
-                label: "On open-menu-tag",
-                click: () => {
-                    this.eventBus.on("open-menu-tag", this.eventBusLog);
-                }
-            }, {
-                icon: "iconClose",
-                label: "Off open-menu-tag",
-                click: () => {
-                    this.eventBus.off("open-menu-tag", this.eventBusLog);
-                }
-            }, {
-                icon: "iconSelect",
-                label: "On open-menu-link",
-                click: () => {
-                    this.eventBus.on("open-menu-link", this.eventBusLog);
-                }
-            }, {
-                icon: "iconClose",
-                label: "Off open-menu-link",
-                click: () => {
-                    this.eventBus.off("open-menu-link", this.eventBusLog);
-                }
-            }, {
-                icon: "iconSelect",
-                label: "On open-menu-image",
-                click: () => {
-                    this.eventBus.on("open-menu-image", this.eventBusLog);
-                }
-            }, {
-                icon: "iconClose",
-                label: "Off open-menu-image",
-                click: () => {
-                    this.eventBus.off("open-menu-image", this.eventBusLog);
-                }
-            }, {
-                icon: "iconSelect",
-                label: "On open-menu-av",
-                click: () => {
-                    this.eventBus.on("open-menu-av", this.eventBusLog);
-                }
-            }, {
-                icon: "iconClose",
-                label: "Off open-menu-av",
-                click: () => {
-                    this.eventBus.off("open-menu-av", this.eventBusLog);
-                }
-            }, {
-                icon: "iconSelect",
-                label: "On open-menu-content",
-                click: () => {
-                    this.eventBus.on("open-menu-content", this.eventBusLog);
-                }
-            }, {
-                icon: "iconClose",
-                label: "Off open-menu-content",
-                click: () => {
-                    this.eventBus.off("open-menu-content", this.eventBusLog);
-                }
-            }, {
-                icon: "iconSelect",
-                label: "On open-menu-breadcrumbmore",
-                click: () => {
-                    this.eventBus.on("open-menu-breadcrumbmore", this.eventBusLog);
-                }
-            }, {
-                icon: "iconClose",
-                label: "Off open-menu-breadcrumbmore",
-                click: () => {
-                    this.eventBus.off("open-menu-breadcrumbmore", this.eventBusLog);
-                }
-            }, {
-                icon: "iconSelect",
-                label: "On input-search",
-                click: () => {
-                    this.eventBus.on("input-search", this.eventBusLog);
-                }
-            }, {
-                icon: "iconClose",
-                label: "Off input-search",
-                click: () => {
-                    this.eventBus.off("input-search", this.eventBusLog);
-                }
-            }, {
-                icon: "iconSelect",
-                label: "On paste",
-                click: () => {
-                    this.eventBus.on("paste", this.eventBusPaste);
-                }
-            }, {
-                icon: "iconClose",
-                label: "Off paste",
-                click: () => {
-                    this.eventBus.off("paste", this.eventBusPaste);
-                }
-            }, {
-                icon: "iconSelect",
-                label: "On open-siyuan-url-plugin",
-                click: () => {
-                    this.eventBus.on("open-siyuan-url-plugin", this.eventBusLog);
-                }
-            }, {
-                icon: "iconClose",
-                label: "Off open-siyuan-url-plugin",
-                click: () => {
-                    this.eventBus.off("open-siyuan-url-plugin", this.eventBusLog);
-                }
-            }, {
-                icon: "iconSelect",
-                label: "On open-siyuan-url-block",
-                click: () => {
-                    this.eventBus.on("open-siyuan-url-block", this.eventBusLog);
-                }
-            }, {
-                icon: "iconClose",
-                label: "Off open-siyuan-url-block",
-                click: () => {
-                    this.eventBus.off("open-siyuan-url-block", this.eventBusLog);
-                }
-            }]
-        });
-
         // 菜单分割线
         menu.addSeparator();
 
-        // 官方默认设置窗口
+        // 打开聊天框
+        // menu.addItem({
+        //     icon: OpenAI_Icon,
+        //     label: "打开聊天框",
+        //     click: () => {
+        //         openTab({
+                    
+        //         })
+        //     }
+        // })
+
+
+        // 模型配置信息
         menu.addItem({
             icon: "iconSettings",
-            label: "Official Setting Dialog",
+            label: "AI大模型配置",
             click: () => {
-                this.openSetting();
+                this.openGPTSetting();
             }
         });
 
-        // 自定义设置窗口
-        menu.addItem({
-            icon: "iconSettings",
-            label: "A custom setting dialog (by svelte)",
-            click: () => {
-                this.openDIYSetting();
-            }
-        });
-
-        // “只读”信息文本
-        menu.addItem({
-            icon: "iconSparkles",
-            label: this.data[STORAGE_NAME].readonlyText || "Readonly",
-            type: "readonly",
-        });
-
+        
         // 根据不同的设备，展示不同的大小
         if (this.isMobile) {
             menu.fullscreen();
