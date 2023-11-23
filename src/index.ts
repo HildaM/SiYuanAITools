@@ -86,6 +86,7 @@ export default class SiYuanAIPlugin extends Plugin {
             element: statusIconTemp.content.firstElementChild as HTMLElement,
         });
 
+        // 顶部图表的二级菜单展示，任意一个都可以生效
         this.addCommand({
             langKey: "showDialog",
             hotkey: "⇧⌘O",
@@ -101,7 +102,7 @@ export default class SiYuanAIPlugin extends Plugin {
             dockCallback: (element: HTMLElement) => {
                 console.log(element, "dockCallback");
             },
-        });
+        }); 
         this.addCommand({
             langKey: "getTab",
             hotkey: "⇧⌘M",
@@ -258,6 +259,7 @@ export default class SiYuanAIPlugin extends Plugin {
 
     /**
      * A custom setting pannel provided by svelte
+     * 注意：需要配合下面的 addMenu() 方法
      */
     openDIYSetting(): void {
         let dialog = new Dialog({
@@ -310,9 +312,11 @@ export default class SiYuanAIPlugin extends Plugin {
         });
     }
 
+    // 点击按钮后，跳出对话框（悬浮、固定）
     private showDialog() {
         let dialog = new Dialog({
             title: `SiYuan ${Constants.SIYUAN_VERSION}`,
+            // 对话框样式
             content: `<div id="helloPanel" class="b3-dialog__content"></div>`,
             width: this.isMobile ? "92vw" : "720px",
             destroyCallback(options) {
@@ -327,10 +331,14 @@ export default class SiYuanAIPlugin extends Plugin {
         });
     }
 
+    // 配置菜单信息
     private addMenu(rect?: DOMRect) {
+        // 菜单对象
         const menu = new Menu("topBarSample", () => {
-            console.log(this.i18n.byeMenu);
-        });
+            console.log("点击了顶栏图表");
+        }); 
+
+        // 打开悬浮固定窗口
         menu.addItem({
             icon: "iconInfo",
             label: "Dialog(open help first)",
@@ -339,11 +347,14 @@ export default class SiYuanAIPlugin extends Plugin {
                 this.showDialog();
             }
         });
+
+        // 电脑端独有的设置
         if (!this.isMobile) {
             menu.addItem({
                 icon: "iconFace",
                 label: "Open Custom Tab",
                 click: () => {
+                    // 使用 openTab() 方法打开一个页面
                     const tab = openTab({
                         app: this.app,
                         custom: {
@@ -358,6 +369,8 @@ export default class SiYuanAIPlugin extends Plugin {
                     console.log(tab);
                 }
             });
+
+            // Asset窗口
             menu.addItem({
                 icon: "iconImage",
                 label: "Open Asset Tab(open help first)",
@@ -371,6 +384,8 @@ export default class SiYuanAIPlugin extends Plugin {
                     console.log(tab);
                 }
             });
+
+            // 文件窗口
             menu.addItem({
                 icon: "iconFile",
                 label: "Open Doc Tab(open help first)",
@@ -384,6 +399,8 @@ export default class SiYuanAIPlugin extends Plugin {
                     console.log(tab);
                 }
             });
+
+            // 搜索栏
             menu.addItem({
                 icon: "iconSearch",
                 label: "Open Search Tab",
@@ -397,6 +414,8 @@ export default class SiYuanAIPlugin extends Plugin {
                     console.log(tab);
                 }
             });
+
+            // 闪卡窗口
             menu.addItem({
                 icon: "iconRiffCard",
                 label: "Open Card Tab",
@@ -410,18 +429,20 @@ export default class SiYuanAIPlugin extends Plugin {
                     console.log(tab);
                 }
             });
+            // 打开悬浮窗
             menu.addItem({
                 icon: "iconLayout",
                 label: "Open Float Layer(open help first)",
                 click: () => {
                     this.addFloatLayer({
-                        ids: ["20210428212840-8rqwn5o", "20201225220955-l154bn4"],
+                        ids: ["20231123084430-h2lp8l9"],
                         defIds: ["20230415111858-vgohvf3", "20200813131152-0wk5akh"],
-                        x: window.innerWidth - 768 - 120,
+                        x: window.innerWidth,
                         y: 32
                     });
                 }
             });
+            // 打开文件
             menu.addItem({
                 icon: "iconOpenWindow",
                 label: "Open Doc Window(open help first)",
@@ -432,6 +453,7 @@ export default class SiYuanAIPlugin extends Plugin {
                 }
             });
         }
+        // 三级菜单
         menu.addItem({
             icon: "iconScrollHoriz",
             label: "Event Bus",
@@ -714,7 +736,11 @@ export default class SiYuanAIPlugin extends Plugin {
                 }
             }]
         });
+
+        // 菜单分割线
         menu.addSeparator();
+
+        // 官方默认设置窗口
         menu.addItem({
             icon: "iconSettings",
             label: "Official Setting Dialog",
@@ -722,6 +748,8 @@ export default class SiYuanAIPlugin extends Plugin {
                 this.openSetting();
             }
         });
+
+        // 自定义设置窗口
         menu.addItem({
             icon: "iconSettings",
             label: "A custom setting dialog (by svelte)",
@@ -729,11 +757,15 @@ export default class SiYuanAIPlugin extends Plugin {
                 this.openDIYSetting();
             }
         });
+
+        // “只读”信息文本
         menu.addItem({
             icon: "iconSparkles",
             label: this.data[STORAGE_NAME].readonlyText || "Readonly",
             type: "readonly",
         });
+
+        // 根据不同的设备，展示不同的大小
         if (this.isMobile) {
             menu.fullscreen();
         } else {
