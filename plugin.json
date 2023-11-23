@@ -1,9 +1,9 @@
 {
-  "name": "plugin-sample-vite-svelte",
-  "author": "frostime",
-  "url": "https://github.com/siyuan-note/plugin-sample-vite-svelte",
-  "version": "0.2.8",
-  "minAppVersion": "2.10.14",
+  "name": "SiYuanAITools",
+  "author": "HildaM",
+  "url": "https://github.com/HildaM/SiYuanAITools",
+  "version": "0.0.1",
+  "minAppVersion": "2.10.15",
   "backends": [
     "windows",
     "linux",
@@ -14,12 +14,12 @@
     "desktop-window"
   ],
   "displayName": {
-    "en_US": "Plugin sample with vite and svelte",
-    "zh_CN": "插件样例 vite + svelte 版"
+    "en_US": "SiYuanAITools",
+    "zh_CN": "SiYuanAITools AI 工具箱"
   },
   "description": {
-    "en_US": "SiYuan plugin sample with vite and svelte",
-    "zh_CN": "使用 vite 和 svelte 开发的思源插件样例"
+    "en_US": "Integrate AI into SiYuan",
+    "zh_CN": "为思源笔记赋能AI技术"
   },
   "readme": {
     "en_US": "README.md",
@@ -27,10 +27,10 @@
   },
   "funding": {
     "custom": [
-      "https://afdian.net/a/frostime"
+      "https://afdian.net/a/hildam"
     ]
   },
   "keywords": [
-    "plugin", "sample", "插件样例"
+    "AI", "tools", "ai工具箱"
   ]
 }
